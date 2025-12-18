@@ -428,6 +428,15 @@
                     </div>
                 </div>
                 <div class="cardBody">
+                    <!-- NOVO: Qualidade PNG -->
+                    <label>Qualidade do PNG (escala)</label>
+                    <select id="pngScale">
+                        <option value="1">1x (rápido)</option>
+                        <option value="2">2x (boa)</option>
+                        <option value="3" selected>3x (ótima)</option>
+                        <option value="4">4x (máxima)</option>
+                    </select>
+
                     <div class="previewBox" id="preview"></div>
                     <div class="note">
                         Se a altura for fixa e houver itens demais, os itens
@@ -513,7 +522,14 @@
                 URL.revokeObjectURL(url);
             }
 
-            async function downloadPNGFromSVG(svgString, outW, outH, filename) {
+            // ===== PNG ALTA QUALIDADE (super-sampling) =====
+            async function downloadPNGFromSVG(
+                svgString,
+                outW,
+                outH,
+                filename,
+                scale = 3
+            ) {
                 const svgBlob = new Blob([svgString], {
                     type: "image/svg+xml;charset=utf-8",
                 });
@@ -528,19 +544,27 @@
                         img.src = svgUrl;
                     });
 
+                    // canvas maior = mais nitidez
                     const canvas = document.createElement("canvas");
-                    canvas.width = outW;
-                    canvas.height = outH;
-                    const ctx = canvas.getContext("2d");
+                    canvas.width = Math.round(outW * scale);
+                    canvas.height = Math.round(outH * scale);
 
-                    // fundo branco (remova para transparência)
+                    const ctx = canvas.getContext("2d");
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = "high";
+
+                    // fundo branco (para transparente: remova estas 2 linhas)
                     ctx.fillStyle = "#ffffff";
-                    ctx.fillRect(0, 0, outW, outH);
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // desenha escalado sem distorcer
+                    ctx.setTransform(scale, 0, 0, scale, 0, 0);
                     ctx.drawImage(img, 0, 0, outW, outH);
 
                     const blob = await new Promise((resolve) =>
                         canvas.toBlob(resolve, "image/png")
                     );
+
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
@@ -958,39 +982,6 @@
                     );
             }
 
-            // fix: manter porções como texto simples (evita erro se vier algo inesperado)
-            function RoesFix(v) {
-                return String(v ?? "");
-            }
-            function RoesFix2(v) {
-                return String(v ?? "");
-            }
-            // compat
-            function RoesFix3(v) {
-                return String(v ?? "");
-            }
-            // usado no buildBR
-            function RoesFix(v) {
-                return String(v ?? "");
-            }
-            // corrigindo nome chamado no template (typo de segurança)
-            function RoesFix4(v) {
-                return String(v ?? "");
-            }
-            // alias exato do buildBR
-            function RoesFix5(v) {
-                return String(v ?? "");
-            }
-            // o buildBR usa esta função
-            function RoesFix6(v) {
-                return String(v ?? "");
-            }
-
-            // (para evitar erro de referência: usamos a mesma assinatura)
-            function RoesFix7(v) {
-                return String(v ?? "");
-            }
-
             // ===== UI list =====
             function renderList() {
                 const list = $("list");
@@ -1000,31 +991,31 @@
                     const item = document.createElement("div");
                     item.className = "nutrientItem";
                     item.innerHTML = `
-        <div class="nutrientItemTop">
-          <span class="pill">Item ${idx + 1}</span>
-          <button class="btnSmall btnDanger" data-del="${idx}">Remover</button>
-        </div>
-        <label>Nome</label>
-        <input data-k="name" data-i="${idx}" value="${esc(r.name)}" />
-        <div class="row3">
-          <div>
-            <label>Quantidade</label>
-            <input data-k="qty" data-i="${idx}" value="${esc(r.qty)}" />
-          </div>
-          <div>
-            <label>Unidade</label>
-            <input data-k="unit" data-i="${idx}" value="${esc(r.unit)}" />
-          </div>
-          <div>
-            <label>${mode === "us" ? "%DV (US)" : "%VD (BR)"}</label>
-            <input data-k="${
-                mode === "us" ? "dv_us" : "vd_br"
-            }" data-i="${idx}" value="${esc(
+            <div class="nutrientItemTop">
+              <span class="pill">Item ${idx + 1}</span>
+              <button class="btnSmall btnDanger" data-del="${idx}">Remover</button>
+            </div>
+            <label>Nome</label>
+            <input data-k="name" data-i="${idx}" value="${esc(r.name)}" />
+            <div class="row3">
+              <div>
+                <label>Quantidade</label>
+                <input data-k="qty" data-i="${idx}" value="${esc(r.qty)}" />
+              </div>
+              <div>
+                <label>Unidade</label>
+                <input data-k="unit" data-i="${idx}" value="${esc(r.unit)}" />
+              </div>
+              <div>
+                <label>${mode === "us" ? "%DV (US)" : "%VD (BR)"}</label>
+                <input data-k="${
+                    mode === "us" ? "dv_us" : "vd_br"
+                }" data-i="${idx}" value="${esc(
                         mode === "us" ? r.dv_us : r.vd_br
                     )}" />
-          </div>
-        </div>
-      `;
+              </div>
+            </div>
+          `;
                     list.appendChild(item);
                 });
 
@@ -1215,20 +1206,26 @@
                 );
             });
 
+            // PNG: usa escala selecionada
             $("dlPNG").addEventListener("click", async () => {
                 if (!window._lastSVG) render();
+
                 const tmp = document.createElement("div");
                 tmp.innerHTML = window._lastSVG;
                 const svgEl = tmp.querySelector("svg");
                 const outW = parseInt(svgEl.getAttribute("width"), 10);
                 const outH = parseInt(svgEl.getAttribute("height"), 10);
+
+                const scale = parseInt($("pngScale")?.value || "3", 10);
+
                 await downloadPNGFromSVG(
                     window._lastSVG,
                     outW,
                     outH,
                     mode === "us"
                         ? "supplement-facts.png"
-                        : "tabela-nutricional-br.png"
+                        : "tabela-nutricional-br.png",
+                    scale
                 );
             });
 
@@ -1239,7 +1236,7 @@
                         "2) Defina largura/altura (ou ative Altura automática).\n" +
                         "3) Adicione nutrientes (ou importe via CSV).\n" +
                         "4) Baixe em SVG/PNG.\n\n" +
-                        "Rodapé não vaza: ele é reservado e as linhas são recortadas por clipPath."
+                        "Dica de qualidade: use PNG 3x ou 4x para ficar bem legível."
                 );
             });
 
@@ -1248,31 +1245,6 @@
             // init
             addDefault();
             setMode("us");
-
-            // --- Compat: função usada em buildBR (evita erro de typo) ---
-            function RoeoesFix(v) {
-                return String(v ?? "");
-            }
-            function RoesFix(v) {
-                return String(v ?? "");
-            }
-            function RoeoesFix2(v) {
-                return String(v ?? "");
-            }
-            function RoeoesFix3(v) {
-                return String(v ?? "");
-            }
-            function RoeoesFix4(v) {
-                return String(v ?? "");
-            }
-            // alias que o template chama (se houver)
-            function RoeesFix(v) {
-                return String(v ?? "");
-            }
-            // e corrigimos o chamado real:
-            function Roja(v) {
-                return String(v ?? "");
-            }
         </script>
     </body>
 </html>
