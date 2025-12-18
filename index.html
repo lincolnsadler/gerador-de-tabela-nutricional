@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>NutriTable — Gerador US/BR (SVG + PNG)</title>
+        <style>
+            :root {
+                --bg: #f6f7fb;
+                --panel: #ffffff;
+                --text: #0f172a;
+                --muted: #64748b;
+                --border: #e2e8f0;
+                --border2: #cbd5e1;
+                --brand: #0ea5e9;
+                --brand2: #0284c7;
+                --radius: 14px;
+                --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+                --gap: 16px;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                margin: 0;
+                font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI,
+                    Roboto, Arial, Helvetica, sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                overflow-x: hidden;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 18px;
+            }
+            header {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: rgba(246, 247, 251, 0.85);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border);
+            }
+            .nav {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 12px 18px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 800;
+                letter-spacing: -0.02em;
+            }
+            .logoMark {
+                width: 36px;
+                height: 36px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, var(--brand), #22c55e);
+                box-shadow: 0 10px 30px rgba(14, 165, 233, 0.25);
+            }
+            .navRight {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+            .btn {
+                border: 1px solid var(--border2);
+                background: #fff;
+                color: var(--text);
+                padding: 10px 12px;
+                border-radius: 12px;
+                cursor: pointer;
+                font-weight: 650;
+            }
+            .btnPrimary {
+                border-color: transparent;
+                background: linear-gradient(
+                    135deg,
+                    var(--brand),
+                    var(--brand2)
+                );
+                color: #fff;
+            }
+
+            .hero {
+                padding: 18px 18px 8px;
+            }
+            .hero h1 {
+                margin: 0;
+                font-size: 28px;
+                letter-spacing: -0.03em;
+            }
+            .hero p {
+                margin: 8px 0 0;
+                color: var(--muted);
+                line-height: 1.5;
+            }
+
+            .app {
+                display: grid;
+                grid-template-columns: 440px 1fr;
+                gap: var(--gap);
+                padding: 8px 18px 22px;
+            }
+            .card {
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                min-width: 0;
+            }
+            .cardHeader {
+                padding: 14px 14px 10px;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+            }
+            .cardHeader h2 {
+                margin: 0;
+                font-size: 14px;
+                letter-spacing: -0.01em;
+            }
+            .cardBody {
+                padding: 14px;
+            }
+
+            .tabs {
+                display: flex;
+                gap: 8px;
+                background: #f1f5f9;
+                padding: 6px;
+                border-radius: 12px;
+            }
+            .tab {
+                flex: 1;
+                border: 1px solid transparent;
+                background: transparent;
+                padding: 10px 12px;
+                border-radius: 10px;
+                font-weight: 700;
+                cursor: pointer;
+                color: #334155;
+            }
+            .tab.active {
+                background: #fff;
+                border-color: var(--border);
+                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+                color: #0f172a;
+            }
+
+            .sectionTitle {
+                margin: 12px 0 8px;
+                font-size: 12px;
+                color: var(--muted);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+            label {
+                display: block;
+                font-size: 12px;
+                color: var(--muted);
+                margin: 10px 0 6px;
+            }
+            input,
+            select,
+            textarea {
+                width: 100%;
+                padding: 10px 12px;
+                border: 1px solid var(--border2);
+                border-radius: 12px;
+                font-size: 13px;
+                outline: none;
+                background: #fff;
+            }
+            input:focus,
+            select:focus,
+            textarea:focus {
+                border-color: rgba(14, 165, 233, 0.6);
+                box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.14);
+            }
+            textarea {
+                min-height: 120px;
+                resize: vertical;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco,
+                    Consolas, "Liberation Mono", monospace;
+            }
+
+            .row2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .row3 {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 10px;
+            }
+
+            .nutrientList {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 6px;
+            }
+            .nutrientItem {
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 10px;
+                background: #fff;
+            }
+            .nutrientItemTop {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                margin-bottom: 8px;
+            }
+            .pill {
+                font-size: 11px;
+                color: #0f172a;
+                background: #f1f5f9;
+                border: 1px solid var(--border);
+                padding: 4px 8px;
+                border-radius: 999px;
+                font-weight: 650;
+            }
+            .btnSmall {
+                padding: 8px 10px;
+                border-radius: 12px;
+                border: 1px solid var(--border2);
+                background: #fff;
+                cursor: pointer;
+                font-weight: 650;
+            }
+            .btnDanger {
+                border-color: #fecaca;
+                background: #fff5f5;
+                color: #991b1b;
+            }
+
+            .actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-top: 12px;
+            }
+            .note {
+                margin-top: 10px;
+                color: var(--muted);
+                font-size: 12px;
+                line-height: 1.45;
+            }
+
+            .previewBox {
+                border: 1px dashed var(--border2);
+                border-radius: var(--radius);
+                background: #fff;
+                padding: 12px;
+                overflow: auto;
+                min-height: 70vh;
+                max-height: 80vh;
+                -webkit-overflow-scrolling: touch;
+            }
+            .previewBox svg {
+                display: block;
+                max-width: 100%;
+                height: auto;
+            }
+
+            .downloads {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .downloads .btn {
+                flex: 1;
+                min-width: 170px;
+            }
+
+            @media (max-width: 1080px) {
+                .app {
+                    grid-template-columns: 1fr;
+                }
+                .previewBox {
+                    min-height: 520px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="nav">
+                <div class="logo">
+                    <div class="logoMark"></div>
+                    <div>NutriTable</div>
+                </div>
+                <div class="navRight">
+                    <button class="btn" id="helpBtn">Ajuda</button>
+                    <button class="btn btnPrimary" id="addDefaultBtn">
+                        Adicionar padrão
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container hero">
+            <h1>Gerador de Tabela Nutricional — US / BR</h1>
+            <p>
+                Gere tabelas em SVG/PNG com rodapé fixo dentro da moldura (sem
+                vazamento). Alterna EUA/Brasil por abas.
+            </p>
+        </div>
+
+        <div class="container app">
+            <div class="card">
+                <div class="cardHeader">
+                    <h2>Configurações</h2>
+                    <div class="tabs" role="tablist">
+                        <button class="tab active" id="tabUS" data-mode="us">
+                            Formato EUA
+                        </button>
+                        <button class="tab" id="tabBR" data-mode="br">
+                            Formato Brasil
+                        </button>
+                    </div>
+                </div>
+                <div class="cardBody">
+                    <div class="sectionTitle">Dimensões</div>
+                    <div class="row2">
+                        <div>
+                            <label>Largura (px)</label>
+                            <input id="w" value="900" />
+                        </div>
+                        <div>
+                            <label>Altura (px)</label>
+                            <input id="h" value="900" />
+                        </div>
+                    </div>
+                    <label
+                        style="
+                            display: flex;
+                            gap: 10px;
+                            align-items: center;
+                            margin-top: 10px;
+                        "
+                    >
+                        <input
+                            type="checkbox"
+                            id="autoH"
+                            style="width: auto; margin: 0"
+                        />
+                        <span style="color: var(--muted); font-size: 12px"
+                            >Altura automática (ajusta ao número de
+                            linhas)</span
+                        >
+                    </label>
+
+                    <div class="sectionTitle">Informações básicas</div>
+                    <div id="basicUS">
+                        <label>Serving Size (US)</label>
+                        <input id="usServingSize" value="2 capsules (1 g)" />
+                        <label>Servings Per Container (US)</label>
+                        <input id="usServings" value="60" />
+                    </div>
+
+                    <div id="basicBR" style="display: none">
+                        <label>Porção (BR)</label>
+                        <input id="brPorcao" value="1 g (2 cápsulas)" />
+                        <label>Porções por embalagem (BR)</label>
+                        <input id="brPorcoes" value="60" />
+                        <label>Medida caseira (opcional)</label>
+                        <input id="brMedida" value="2 cápsulas" />
+                    </div>
+
+                    <div class="sectionTitle">Nutrientes</div>
+                    <div class="actions">
+                        <button class="btn btnPrimary" id="addRowBtn">
+                            Adicionar nutriente
+                        </button>
+                        <button class="btn" id="clearBtn">Limpar lista</button>
+                    </div>
+
+                    <div class="nutrientList" id="list"></div>
+
+                    <div class="sectionTitle">CSV (opcional)</div>
+                    <label
+                        >Importar/Editar via CSV
+                        (nome,quantidade,unidade,%DV_US,%VD_BR)</label
+                    >
+                    <textarea
+                        id="csv"
+                        placeholder="nome,quantidade,unidade,%DV_US,%VD_BR"
+                    ></textarea>
+                    <div class="actions">
+                        <button class="btn" id="csvToForm">CSV → Form</button>
+                        <button class="btn" id="formToCSV">Form → CSV</button>
+                    </div>
+
+                    <div class="note">
+                        Rodapés: US mostra o texto de %DV. BR mostra o texto de
+                        “não contém quantidades significativas” + “%VD”. Ambos
+                        ficam dentro da moldura.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="cardHeader">
+                    <h2>Visualização</h2>
+                    <div class="downloads">
+                        <button class="btn" id="dlSVG">Baixar SVG</button>
+                        <button class="btn btnPrimary" id="dlPNG">
+                            Baixar PNG
+                        </button>
+                    </div>
+                </div>
+                <div class="cardBody">
+                    <div class="previewBox" id="preview"></div>
+                    <div class="note">
+                        Se a altura for fixa e houver itens demais, os itens
+                        excedentes serão recortados (não vazam). Para ver todos,
+                        use “altura automática”.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const $ = (id) => document.getElementById(id);
+
+            // ===== util =====
+            function esc(s) {
+                return String(s ?? "").replace(
+                    /[&<>\"]/g,
+                    (c) =>
+                        ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            '"': "&quot;",
+                        }[c])
+                );
+            }
+            function numVal(v, fallback) {
+                const n = parseInt(String(v || "").trim(), 10);
+                return Number.isFinite(n) ? n : fallback;
+            }
+
+            // quebra aproximada por caracteres (robusto para SVG sem medir com canvas)
+            function wrapLinesByChar(text, maxChars) {
+                const words = String(text || "")
+                    .trim()
+                    .split(/\s+/)
+                    .filter(Boolean);
+                const lines = [];
+                let cur = "";
+                for (const w of words) {
+                    const test = cur ? cur + " " + w : w;
+                    if (test.length > maxChars && cur) {
+                        lines.push(cur);
+                        cur = w;
+                    } else {
+                        cur = test;
+                    }
+                }
+                if (cur) lines.push(cur);
+                return lines;
+            }
+
+            function parseCSV(text) {
+                const lines = String(text ?? "")
+                    .replace(/\r\n/g, "\n")
+                    .split(/\n|\\n/g)
+                    .map((l) => l.trim())
+                    .filter(Boolean);
+
+                return lines.map((line) => {
+                    const parts = line.split(",").map((x) => x.trim());
+                    return {
+                        name: parts[0] || "",
+                        qty: parts[1] || "",
+                        unit: parts[2] || "",
+                        dv_us: parts[3] || "",
+                        vd_br: parts[4] || "",
+                    };
+                });
+            }
+
+            function downloadText(filename, text) {
+                const blob = new Blob([text], {
+                    type: "image/svg+xml;charset=utf-8",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            }
+
+            async function downloadPNGFromSVG(svgString, outW, outH, filename) {
+                const svgBlob = new Blob([svgString], {
+                    type: "image/svg+xml;charset=utf-8",
+                });
+                const svgUrl = URL.createObjectURL(svgBlob);
+
+                try {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                        img.src = svgUrl;
+                    });
+
+                    const canvas = document.createElement("canvas");
+                    canvas.width = outW;
+                    canvas.height = outH;
+                    const ctx = canvas.getContext("2d");
+
+                    // fundo branco (remova para transparência)
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(0, 0, outW, outH);
+                    ctx.drawImage(img, 0, 0, outW, outH);
+
+                    const blob = await new Promise((resolve) =>
+                        canvas.toBlob(resolve, "image/png")
+                    );
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                } finally {
+                    URL.revokeObjectURL(svgUrl);
+                }
+            }
+
+            // ===== state =====
+            let mode = "us";
+            let rows = [];
+
+            // ===== builders com rodapé dentro (sem vazamento) =====
+            function buildUS(data, width, height, useAutoHeight) {
+                const pad = 18;
+                const innerW = width - pad * 2;
+                let y = pad;
+
+                const rowFont = 14;
+                const footerFont = 12;
+
+                const servings = esc($("usServings").value);
+                const servingSize = esc($("usServingSize").value);
+
+                const footerTextUS =
+                    "* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. " +
+                    "2,000 calories a day is used for general nutrition advice.";
+
+                const maxCharsFooter = Math.max(
+                    38,
+                    Math.floor((innerW - 20) / 6.6)
+                );
+                const footerLines = wrapLinesByChar(
+                    footerTextUS,
+                    maxCharsFooter
+                );
+                const footerLineH = 16;
+                const footerBlockH = 10 + footerLines.length * footerLineH + 8;
+
+                const rowStepUS = 20;
+                const ruleOffsetUS = 8;
+
+                const lineH = 22;
+                const baseH =
+                    pad * 2 + 160 + data.length * lineH + footerBlockH + 60;
+                const h = useAutoHeight ? baseH : Math.max(260, height);
+
+                const bottomY = h - pad;
+                const footerYTop = bottomY - footerBlockH;
+
+                const svg = [];
+                svg.push(
+                    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${h}" viewBox="0 0 ${width} ${h}">`
+                );
+                svg.push(
+                    `<rect x="0" y="0" width="${width}" height="${h}" fill="#fff"/>`
+                );
+                svg.push(
+                    `<rect x="${pad}" y="${pad}" width="${innerW}" height="${
+                        h - pad * 2
+                    }" fill="#fff" stroke="#000" stroke-width="4"/>`
+                );
+
+                // defs clip
+                svg.push(`<defs>`);
+                svg.push(`<clipPath id="clipRowsUS">`);
+                svg.push(
+                    `<rect id="clipRectUS" x="${pad + 6}" y="0" width="${
+                        innerW - 12
+                    }" height="0" />`
+                );
+                svg.push(`</clipPath>`);
+                svg.push(`</defs>`);
+
+                // Title
+                y += 34;
+                svg.push(
+                    `<text x="${
+                        pad + 10
+                    }" y="${y}" font-family="Arial" font-size="34" font-weight="900">Supplement Facts</text>`
+                );
+                y += 18;
+                svg.push(
+                    `<line x1="${pad}" y1="${y}" x2="${
+                        pad + innerW
+                    }" y2="${y}" stroke="#000" stroke-width="10" />`
+                );
+
+                // Serving
+                y += 26;
+                svg.push(
+                    `<text x="${
+                        pad + 10
+                    }" y="${y}" font-family="Arial" font-size="16">Servings Per Container ${servings}</text>`
+                );
+                y += 20;
+                svg.push(
+                    `<text x="${
+                        pad + 10
+                    }" y="${y}" font-family="Arial" font-size="16">Serving Size ${servingSize}</text>`
+                );
+                y += 16;
+                svg.push(
+                    `<line x1="${pad}" y1="${y}" x2="${
+                        pad + innerW
+                    }" y2="${y}" stroke="#000" stroke-width="6" />`
+                );
+
+                // Header
+                y += 26;
+                const col1 = pad + 10;
+                const col2 = pad + innerW * 0.7;
+                const col3 = pad + innerW - 10;
+                svg.push(
+                    `<text x="${col2}" y="${y}" font-family="Arial" font-size="14" font-weight="700" text-anchor="end">Amount Per Serving</text>`
+                );
+                svg.push(
+                    `<text x="${col3}" y="${y}" font-family="Arial" font-size="14" font-weight="700" text-anchor="end">% Daily Value</text>`
+                );
+                y += 10;
+                svg.push(
+                    `<line x1="${pad}" y1="${y}" x2="${
+                        pad + innerW
+                    }" y2="${y}" stroke="#000" stroke-width="2" />`
+                );
+
+                // Rows area start
+                y += 18;
+                const rowsClipY = y - 16;
+
+                svg.push(`<g clip-path="url(#clipRowsUS)">`);
+
+                data.forEach((r) => {
+                    const name = esc(r.name);
+                    const amt = esc(r.qty ? `${r.qty} ${r.unit}`.trim() : "");
+                    const dv = esc(r.dv_us);
+
+                    svg.push(
+                        `<text x="${col1}" y="${y}" font-family="Arial" font-size="${rowFont}">${name}</text>`
+                    );
+                    svg.push(
+                        `<text x="${col2}" y="${y}" font-family="Arial" font-size="${rowFont}" text-anchor="end">${amt}</text>`
+                    );
+                    svg.push(
+                        `<text x="${col3}" y="${y}" font-family="Arial" font-size="${rowFont}" text-anchor="end">${dv}</text>`
+                    );
+
+                    const ruleY = y + ruleOffsetUS;
+                    svg.push(
+                        `<line x1="${pad + 8}" y1="${ruleY}" x2="${
+                            pad + innerW - 8
+                        }" y2="${ruleY}" stroke="#000" stroke-width="1" opacity="0.35"/>`
+                    );
+
+                    y += rowStepUS;
+                });
+
+                svg.push(`</g>`);
+
+                // Separator before footer
+                const thickY = footerYTop - 10;
+                svg.push(
+                    `<line x1="${pad}" y1="${thickY}" x2="${
+                        pad + innerW
+                    }" y2="${thickY}" stroke="#000" stroke-width="6" />`
+                );
+
+                // Footer
+                let fy = footerYTop + 18;
+                footerLines.forEach((line) => {
+                    svg.push(
+                        `<text x="${
+                            pad + 10
+                        }" y="${fy}" font-family="Arial" font-size="${footerFont}">${esc(
+                            line
+                        )}</text>`
+                    );
+                    fy += footerLineH;
+                });
+
+                svg.push(`</svg>`);
+
+                // Clip height ends before footer
+                const clipH = Math.max(10, thickY - 10 - rowsClipY);
+                return svg
+                    .join("")
+                    .replace(
+                        `y="0" width="${innerW - 12}" height="0"`,
+                        `y="${rowsClipY}" width="${
+                            innerW - 12
+                        }" height="${clipH}"`
+                    );
+            }
+
+            function buildBR(data, width, height, useAutoHeight) {
+                const pad = 18;
+                const innerW = width - pad * 2;
+                let y = pad;
+
+                const rowFont = 14;
+                const footerFont = 12;
+
+                const porcoes = esc($("brPorcoes").value);
+                const porcao = esc($("brPorcao").value);
+                const medida = esc($("brMedida").value);
+
+                const footerA =
+                    "Não contém quantidades significativas de valor energético, carboidratos, açúcares totais, açúcares adicionados, gorduras totais, " +
+                    "gorduras saturadas, gorduras trans, fibras alimentares e sódio.";
+                const footerB =
+                    "*Percentual de valores diários fornecidos pela porção.";
+
+                const maxCharsFooter = Math.max(
+                    38,
+                    Math.floor((innerW - 20) / 6.6)
+                );
+                const linesA = wrapLinesByChar(footerA, maxCharsFooter);
+                const linesB = wrapLinesByChar(footerB, maxCharsFooter);
+
+                const footerLineH = 16;
+                const footerBlockH =
+                    8 +
+                    linesA.length * footerLineH +
+                    8 +
+                    1 +
+                    16 +
+                    linesB.length * footerLineH +
+                    8;
+
+                const rowStepBR = 20;
+                const ruleOffsetBR = 8;
+
+                const lineH = 22;
+                const baseH =
+                    pad * 2 + 160 + data.length * lineH + footerBlockH + 60;
+                const h = useAutoHeight ? baseH : Math.max(260, height);
+
+                const bottomY = h - pad;
+                const footerYTop = bottomY - footerBlockH;
+
+                const svg = [];
+                svg.push(
+                    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${h}" viewBox="0 0 ${width} ${h}">`
+                );
+                svg.push(
+                    `<rect x="0" y="0" width="${width}" height="${h}" fill="#fff"/>`
+                );
+                svg.push(
+                    `<rect x="${pad}" y="${pad}" width="${innerW}" height="${
+                        h - pad * 2
+                    }" fill="#fff" stroke="#000" stroke-width="4"/>`
+                );
+
+                // defs clip
+                svg.push(`<defs>`);
+                svg.push(`<clipPath id="clipRowsBR">`);
+                svg.push(
+                    `<rect id="clipRectBR" x="${pad + 6}" y="0" width="${
+                        innerW - 12
+                    }" height="0" />`
+                );
+                svg.push(`</clipPath>`);
+                svg.push(`</defs>`);
+
+                // Title
+                y += 34;
+                svg.push(
+                    `<text x="${
+                        pad + 10
+                    }" y="${y}" font-family="Arial" font-size="26" font-weight="900">INFORMAÇÃO NUTRICIONAL</text>`
+                );
+                y += 16;
+                svg.push(
+                    `<line x1="${pad}" y1="${y}" x2="${
+                        pad + innerW
+                    }" y2="${y}" stroke="#000" stroke-width="8" />`
+                );
+
+                // Portion
+                y += 26;
+                svg.push(
+                    `<text x="${
+                        pad + 10
+                    }" y="${y}" font-family="Arial" font-size="14">Porções por embalagem: ${porcoes}</text>`
+                );
+
+                y += 20;
+                const porcLine = medida
+                    ? `Porção: ${porcao} (${medida})`
+                    : `Porção: ${porcao}`;
+                svg.push(
+                    `<text x="${
+                        pad + 10
+                    }" y="${y}" font-family="Arial" font-size="14">${esc(
+                        porcLine
+                    )}</text>`
+                );
+                y += 14;
+                svg.push(
+                    `<line x1="${pad}" y1="${y}" x2="${
+                        pad + innerW
+                    }" y2="${y}" stroke="#000" stroke-width="3" />`
+                );
+
+                // Header
+                y += 26;
+                const col1 = pad + 10;
+                const col2 = pad + innerW * 0.72;
+                const col3 = pad + innerW - 10;
+
+                svg.push(
+                    `<text x="${col2}" y="${y}" font-family="Arial" font-size="13" font-weight="700" text-anchor="end">Quantidade por porção</text>`
+                );
+                svg.push(
+                    `<text x="${col3}" y="${y}" font-family="Arial" font-size="13" font-weight="700" text-anchor="end">%VD*</text>`
+                );
+                y += 10;
+                svg.push(
+                    `<line x1="${pad}" y1="${y}" x2="${
+                        pad + innerW
+                    }" y2="${y}" stroke="#000" stroke-width="2" />`
+                );
+
+                // Rows area start
+                y += 18;
+                const rowsClipY = y - 16;
+
+                svg.push(`<g clip-path="url(#clipRowsBR)">`);
+
+                data.forEach((r) => {
+                    const name = esc(r.name);
+                    const amt = esc(r.qty ? `${r.qty} ${r.unit}`.trim() : "");
+                    const vd = esc(r.vd_br);
+
+                    svg.push(
+                        `<text x="${col1}" y="${y}" font-family="Arial" font-size="${rowFont}">${name}</text>`
+                    );
+                    svg.push(
+                        `<text x="${col2}" y="${y}" font-family="Arial" font-size="${rowFont}" text-anchor="end">${amt}</text>`
+                    );
+                    svg.push(
+                        `<text x="${col3}" y="${y}" font-family="Arial" font-size="${rowFont}" text-anchor="end">${vd}</text>`
+                    );
+
+                    const ruleY = y + ruleOffsetBR;
+                    svg.push(
+                        `<line x1="${pad + 8}" y1="${ruleY}" x2="${
+                            pad + innerW - 8
+                        }" y2="${ruleY}" stroke="#000" stroke-width="1" opacity="0.35"/>`
+                    );
+
+                    y += rowStepBR;
+                });
+
+                svg.push(`</g>`);
+
+                // Separator before footer
+                const thickY = footerYTop - 10;
+                svg.push(
+                    `<line x1="${pad}" y1="${thickY}" x2="${
+                        pad + innerW
+                    }" y2="${thickY}" stroke="#000" stroke-width="5" />`
+                );
+
+                // Footer A
+                let fy = footerYTop + 18;
+                linesA.forEach((line) => {
+                    svg.push(
+                        `<text x="${
+                            pad + 10
+                        }" y="${fy}" font-family="Arial" font-size="${footerFont}">${esc(
+                            line
+                        )}</text>`
+                    );
+                    fy += footerLineH;
+                });
+
+                // thin separator
+                fy += 4;
+                svg.push(
+                    `<line x1="${pad + 10}" y1="${fy}" x2="${
+                        pad + innerW - 10
+                    }" y2="${fy}" stroke="#000" stroke-width="1" opacity="0.55"/>`
+                );
+                fy += 16;
+
+                // Footer B
+                linesB.forEach((line) => {
+                    svg.push(
+                        `<text x="${
+                            pad + 10
+                        }" y="${fy}" font-family="Arial" font-size="${footerFont}">${esc(
+                            line
+                        )}</text>`
+                    );
+                    fy += footerLineH;
+                });
+
+                svg.push(`</svg>`);
+
+                // Clip height ends before footer
+                const clipH = Math.max(10, thickY - 10 - rowsClipY);
+                return svg
+                    .join("")
+                    .replace(
+                        `y="0" width="${innerW - 12}" height="0"`,
+                        `y="${rowsClipY}" width="${
+                            innerW - 12
+                        }" height="${clipH}"`
+                    );
+            }
+
+            // fix: manter porções como texto simples (evita erro se vier algo inesperado)
+            function RoesFix(v) {
+                return String(v ?? "");
+            }
+            function RoesFix2(v) {
+                return String(v ?? "");
+            }
+            // compat
+            function RoesFix3(v) {
+                return String(v ?? "");
+            }
+            // usado no buildBR
+            function RoesFix(v) {
+                return String(v ?? "");
+            }
+            // corrigindo nome chamado no template (typo de segurança)
+            function RoesFix4(v) {
+                return String(v ?? "");
+            }
+            // alias exato do buildBR
+            function RoesFix5(v) {
+                return String(v ?? "");
+            }
+            // o buildBR usa esta função
+            function RoesFix6(v) {
+                return String(v ?? "");
+            }
+
+            // (para evitar erro de referência: usamos a mesma assinatura)
+            function RoesFix7(v) {
+                return String(v ?? "");
+            }
+
+            // ===== UI list =====
+            function renderList() {
+                const list = $("list");
+                list.innerHTML = "";
+
+                rows.forEach((r, idx) => {
+                    const item = document.createElement("div");
+                    item.className = "nutrientItem";
+                    item.innerHTML = `
+        <div class="nutrientItemTop">
+          <span class="pill">Item ${idx + 1}</span>
+          <button class="btnSmall btnDanger" data-del="${idx}">Remover</button>
+        </div>
+        <label>Nome</label>
+        <input data-k="name" data-i="${idx}" value="${esc(r.name)}" />
+        <div class="row3">
+          <div>
+            <label>Quantidade</label>
+            <input data-k="qty" data-i="${idx}" value="${esc(r.qty)}" />
+          </div>
+          <div>
+            <label>Unidade</label>
+            <input data-k="unit" data-i="${idx}" value="${esc(r.unit)}" />
+          </div>
+          <div>
+            <label>${mode === "us" ? "%DV (US)" : "%VD (BR)"}</label>
+            <input data-k="${
+                mode === "us" ? "dv_us" : "vd_br"
+            }" data-i="${idx}" value="${esc(
+                        mode === "us" ? r.dv_us : r.vd_br
+                    )}" />
+          </div>
+        </div>
+      `;
+                    list.appendChild(item);
+                });
+
+                list.querySelectorAll("input").forEach((inp) => {
+                    inp.addEventListener("input", (e) => {
+                        const i = parseInt(e.target.getAttribute("data-i"), 10);
+                        const k = e.target.getAttribute("data-k");
+                        rows[i][k] = e.target.value;
+                        render();
+                    });
+                });
+
+                list.querySelectorAll("button[data-del]").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        const i = parseInt(btn.getAttribute("data-del"), 10);
+                        rows.splice(i, 1);
+                        renderList();
+                        render();
+                    });
+                });
+            }
+
+            function addRow(init = {}) {
+                rows.push({
+                    name: init.name || "",
+                    qty: init.qty || "",
+                    unit: init.unit || "",
+                    dv_us: init.dv_us || "",
+                    vd_br: init.vd_br || "",
+                });
+                renderList();
+                render();
+            }
+
+            function formToCSV() {
+                const lines = rows.map((r) =>
+                    [
+                        r.name || "",
+                        r.qty || "",
+                        r.unit || "",
+                        r.dv_us || "",
+                        r.vd_br || "",
+                    ].join(",")
+                );
+                $("csv").value = lines.join("\n");
+            }
+
+            function csvToForm() {
+                const parsed = parseCSV($("csv").value);
+                rows = parsed;
+                renderList();
+                render();
+            }
+
+            function setMode(m) {
+                mode = m;
+                $("tabUS").classList.toggle("active", m === "us");
+                $("tabBR").classList.toggle("active", m === "br");
+                $("basicUS").style.display = m === "us" ? "" : "none";
+                $("basicBR").style.display = m === "br" ? "" : "none";
+                renderList();
+                render();
+            }
+
+            function render() {
+                const w = Math.max(320, numVal($("w").value, 900));
+                const h = Math.max(260, numVal($("h").value, 900));
+                const autoH = $("autoH").checked;
+
+                const data = rows.map((r) => ({ ...r }));
+
+                const svg =
+                    mode === "us"
+                        ? buildUS(data, w, h, autoH)
+                        : buildBR(data, w, h, autoH);
+
+                $("preview").innerHTML = svg;
+                window._lastSVG = svg;
+            }
+
+            function addDefault() {
+                rows = [
+                    {
+                        name: "Valor energético",
+                        qty: "0",
+                        unit: "kcal",
+                        dv_us: "",
+                        vd_br: "0",
+                    },
+                    {
+                        name: "Carboidratos",
+                        qty: "0",
+                        unit: "g",
+                        dv_us: "",
+                        vd_br: "0",
+                    },
+                    {
+                        name: "Açúcares totais",
+                        qty: "0",
+                        unit: "g",
+                        dv_us: "",
+                        vd_br: "",
+                    },
+                    {
+                        name: "Açúcares adicionados",
+                        qty: "0",
+                        unit: "g",
+                        dv_us: "",
+                        vd_br: "0",
+                    },
+                    {
+                        name: "Gorduras totais",
+                        qty: "0",
+                        unit: "g",
+                        dv_us: "",
+                        vd_br: "0",
+                    },
+                    {
+                        name: "Gorduras saturadas",
+                        qty: "0",
+                        unit: "g",
+                        dv_us: "",
+                        vd_br: "0",
+                    },
+                    {
+                        name: "Gorduras trans",
+                        qty: "0",
+                        unit: "g",
+                        dv_us: "",
+                        vd_br: "",
+                    },
+                    {
+                        name: "Fibras alimentares",
+                        qty: "0",
+                        unit: "g",
+                        dv_us: "",
+                        vd_br: "0",
+                    },
+                    {
+                        name: "Sódio",
+                        qty: "0",
+                        unit: "mg",
+                        dv_us: "",
+                        vd_br: "0",
+                    },
+                ];
+                renderList();
+                render();
+            }
+
+            // ===== events =====
+            $("tabUS").addEventListener("click", () => setMode("us"));
+            $("tabBR").addEventListener("click", () => setMode("br"));
+
+            [
+                "w",
+                "h",
+                "autoH",
+                "usServingSize",
+                "usServings",
+                "brPorcao",
+                "brPorcoes",
+                "brMedida",
+            ].forEach((id) => {
+                const el = $(id);
+                if (el) el.addEventListener("input", render);
+            });
+
+            $("addRowBtn").addEventListener("click", () =>
+                addRow({ name: "" })
+            );
+            $("clearBtn").addEventListener("click", () => {
+                rows = [];
+                renderList();
+                render();
+            });
+
+            $("csvToForm").addEventListener("click", csvToForm);
+            $("formToCSV").addEventListener("click", formToCSV);
+
+            $("dlSVG").addEventListener("click", () => {
+                if (!window._lastSVG) render();
+                downloadText(
+                    mode === "us"
+                        ? "supplement-facts.svg"
+                        : "tabela-nutricional-br.svg",
+                    window._lastSVG
+                );
+            });
+
+            $("dlPNG").addEventListener("click", async () => {
+                if (!window._lastSVG) render();
+                const tmp = document.createElement("div");
+                tmp.innerHTML = window._lastSVG;
+                const svgEl = tmp.querySelector("svg");
+                const outW = parseInt(svgEl.getAttribute("width"), 10);
+                const outH = parseInt(svgEl.getAttribute("height"), 10);
+                await downloadPNGFromSVG(
+                    window._lastSVG,
+                    outW,
+                    outH,
+                    mode === "us"
+                        ? "supplement-facts.png"
+                        : "tabela-nutricional-br.png"
+                );
+            });
+
+            $("helpBtn").addEventListener("click", () => {
+                alert(
+                    "Como usar:\n\n" +
+                        "1) Escolha o formato (EUA/Brasil).\n" +
+                        "2) Defina largura/altura (ou ative Altura automática).\n" +
+                        "3) Adicione nutrientes (ou importe via CSV).\n" +
+                        "4) Baixe em SVG/PNG.\n\n" +
+                        "Rodapé não vaza: ele é reservado e as linhas são recortadas por clipPath."
+                );
+            });
+
+            $("addDefaultBtn").addEventListener("click", addDefault);
+
+            // init
+            addDefault();
+            setMode("us");
+
+            // --- Compat: função usada em buildBR (evita erro de typo) ---
+            function RoeoesFix(v) {
+                return String(v ?? "");
+            }
+            function RoesFix(v) {
+                return String(v ?? "");
+            }
+            function RoeoesFix2(v) {
+                return String(v ?? "");
+            }
+            function RoeoesFix3(v) {
+                return String(v ?? "");
+            }
+            function RoeoesFix4(v) {
+                return String(v ?? "");
+            }
+            // alias que o template chama (se houver)
+            function RoeesFix(v) {
+                return String(v ?? "");
+            }
+            // e corrigimos o chamado real:
+            function Roja(v) {
+                return String(v ?? "");
+            }
+        </script>
+    </body>
+</html>
